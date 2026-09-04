@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>미스테리팜 | 오늘의 맞춤 샐러드</title>
+<meta name="description" content="오늘 컨디션에 맞춰 미스테리팜 채소로 만드는 맞춤 샐러드를 추천해드립니다.">
+
+<!-- =========================================================
+  🛠 [커스터마이징 가이드]
+  이 파일도 index.html처럼 하나의 파일 안에 전부 들어있습니다.
+
+  1) 채소 추가/수정 → 코드 안 "⭐ 채소 데이터" 부분 찾기
+  2) 컨디션 문구 수정 → "⭐ 컨디션 선택지" 부분 찾기
+  3) 추천 재료 수정  → "⭐ 보완 재료" 부분 찾기
+  4) 색상은 index.html과 통일되어 있어서, 여기서 바꾸면
+     index.html의 :root 색상도 똑같이 맞춰서 바꿔주세요.
+
+  Ctrl+F(찾기)로 "⭐"를 검색하면 수정할 곳을 빠르게 찾을 수 있어요.
+========================================================== -->
+
+<style>
+  :root {
+    --color-bg: #F7F3EC;
+    --color-bg-alt: #EFE7D8;
+    --color-primary: #2C4A3B;
+    --color-primary-dark: #1C3128;
+    --color-accent: #C1541A;
+    --color-accent-dark: #9C4014;
+    --color-text: #2A2622;
+    --color-text-soft: #6B6255;
+    --color-border: #DDD3BE;
+    --font-display: "Noto Serif KR", serif;
+    --font-body: "Noto Sans KR", sans-serif;
+    --radius: 8px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: var(--font-body);
+    background: var(--color-bg-alt);
+    color: var(--color-text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 12px;
+  }
+  .app {
+    width: 100%;
+    max-width: 420px;
+    background: var(--color-bg);
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    box-shadow: 0 8px 28px rgba(28,49,40,0.12);
+  }
+  .kiosk-header {
+    background: var(--color-primary);
+    padding: 16px;
+    color: #fff;
+    display: grid;
+    grid-template-columns: 32px 1fr 32px;
+    align-items: center;
+  }
+  .kiosk-header h1 {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 700;
+    margin: 0;
+    text-align: center;
+  }
+  #backBtn {
+    background: none; border: none; color: #fff;
+    font-size: 20px; cursor: pointer; padding: 4px 6px;
+    visibility: hidden; justify-self: start;
+  }
+  .home-link {
+    color: rgba(255,255,255,0.8);
+    font-size: 12px; text-decoration: none; justify-self: end;
+  }
+  .dots { display: flex; gap: 6px; justify-content: center; padding: 12px 16px 0; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-border); }
+  .dot.active { background: var(--color-accent); }
+
+  .kiosk-body { padding: 24px 22px 28px; min-height: 340px; }
+  .screen h2 { font-family: var(--font-display); font-size: 19px; margin: 0 0 6px; }
+  .screen .sub { font-size: 13px; color: var(--color-text-soft); margin: 0 0 18px; }
+
+  .opt-btn {
+    display: block; width: 100%; text-align: left;
+    padding: 14px 16px; margin-bottom: 8px;
+    border: 1px solid var(--color-border); border-radius: var(--radius);
+    background: #fff; color: var(--color-text);
+    font-size: 14px; font-family: var(--font-body); cursor: pointer;
+    transition: background-color .15s ease, border-color .15s ease;
+  }
+  .opt-btn:hover { border-color: var(--color-accent-dark); }
+  .opt-btn.selected {
+    background: var(--color-bg-alt);
+    border-color: var(--color-accent-dark);
+    color: var(--color-accent-dark);
+    font-weight: 700;
+  }
+  .next-wrap { text-align: right; margin-top: 12px; min-height: 40px; }
+  .pill-btn {
+    padding: 10px 18px; border: none; border-radius: 999px;
+    background: var(--color-accent-dark); color: #fff;
+    font-size: 13px; font-weight: 700; cursor: pointer;
+  }
+
+  .result-label { font-size: 12px; color: var(--color-accent-dark); font-weight: 700; margin: 0 0 4px; }
+  .result-title { font-family: var(--font-display); font-size: 22px; margin: 0 0 10px; }
+  .result-reason { font-size: 13px; color: var(--color-text-soft); margin: 0 0 20px; }
+  .chip-label { font-size: 12px; color: var(--color-text-soft); margin: 0 0 8px; }
+  .chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; }
+  .chip { font-size: 13px; padding: 6px 12px; border-radius: 999px; }
+  .chip.veg { background: var(--color-bg-alt); color: var(--color-primary); }
+  .chip.add { background: #F7EAE0; color: var(--color-accent-dark); }
+
+  .health-note {
+    font-size: 12px; color: var(--color-text-soft);
+    background: var(--color-bg-alt); border-radius: var(--radius);
+    padding: 12px 14px; margin-bottom: 18px; line-height: 1.6;
+  }
+  .reset-btn {
+    width: 100%; padding: 14px; border: none; border-radius: var(--radius);
+    background: var(--color-accent-dark); color: #fff;
+    font-size: 14px; font-weight: 700; cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header class="kiosk-header">
+    <button id="backBtn" aria-label="이전 화면">←</button>
+    <h1>미스테리팜 샐러드 추천</h1>
+    <a class="home-link" href="index.html">홈</a>
+  </header>
+  <div class="dots" id="dots"></div>
+
+  <main class="kiosk-body">
+
+    <section class="screen" data-i="0">
+      <h2>연령대를 선택해주세요</h2>
+      <p class="sub">누르면 바로 다음 화면으로 넘어가요</p>
+      <div id="ageOpts"></div>
+    </section>
+
+    <section class="screen" data-i="1" style="display:none">
+      <h2>오늘 컨디션은 어떠세요?</h2>
+      <p class="sub">최대 2개까지 고를 수 있어요</p>
+      <div id="condOpts"></div>
+      <div class="next-wrap" id="condNext"></div>
+    </section>
+
+    <section class="screen" data-i="2" style="display:none">
+      <h2>건강 특이사항이 있나요?</h2>
+      <p class="sub">"없음"을 누르면 바로 다음으로 넘어가요</p>
+      <div id="healthOpts"></div>
+      <div class="next-wrap" id="healthNext"></div>
+    </section>
+
+    <section class="screen" data-i="3" style="display:none">
+      <h2>알레르기가 있으신가요?</h2>
+      <p class="sub">"없음"을 누르면 바로 다음으로 넘어가요</p>
+      <div id="allergyOpts"></div>
+      <div class="next-wrap" id="allergyNext"></div>
+    </section>
+
+    <section class="screen" data-i="4" style="display:none">
+      <p class="result-label">오늘의 추천 샐러드</p>
+      <p class="result-title" id="resultTitle">맞춤 샐러드</p>
+      <p class="result-reason" id="resultReason"></p>
+
+      <p class="chip-label">농장 채소</p>
+      <div class="chip-row" id="vegChips"></div>
+
+      <p class="chip-label">함께 먹으면 좋은 재료</p>
+      <div class="chip-row" id="addChips"></div>
+
+      <div class="health-note" id="healthNote" style="display:none"></div>
+
+      <button class="reset-btn" id="resetBtn">처음으로</button>
+    </section>
+
+  </main>
+</div>
+
+<script>
+/* ⭐ 채소 데이터 - 채소를 더 추가하려면 이 배열에 { name:'이름', tags:['태그1','태그2'] } 형식으로 한 줄 추가하면 됩니다 */
+var veggies = [
+  { name: '로메인',   tags: ['소화편함', '가벼운식사'] },
+  { name: '버터헤드', tags: ['소화편함', '가벼운식사'] },
+  { name: '케일',     tags: ['피로감', '활동많음'] },
+  { name: '루꼴라',   tags: ['스트레스', '가벼운식사'] },
+  { name: '겨자채',   tags: ['활동많음'] },
+  { name: '미즈나',   tags: ['소화편함', '가벼운식사'] },
+  { name: '카이피라', tags: ['피로감', '활동많음', '소화편함'] }
+];
+var defaultVeggies = ['카이피라', '로메인', '버터헤드'];
+
+/* ⭐ 컨디션 선택지 - 문구를 바꾸려면 여기, 태그를 바꾸려면 오른쪽 값을 위 채소 태그와 맞춰서 바꾸세요 */
+var condTagMap = {
+  '😴 피곤해요': '피로감',
+  '😣 스트레스 받았어요': '스트레스',
+  '🏃 많이 움직였어요': '활동많음',
+  '🛋️ 별로 안 움직였어요': '가벼운식사',
+  '🤢 속이 불편해요': '소화편함',
+  '😊 컨디션 좋아요': null
+};
+var conds = Object.keys(condTagMap);
+
+/* ⭐ 보완 재료 - 컨디션별로 함께 추천할 재료 목록입니다 */
+var complementMap = {
+  '😴 피곤해요': ['계란', '닭가슴살'],
+  '😣 스트레스 받았어요': ['아보카도', '견과류'],
+  '🏃 많이 움직였어요': ['고구마', '닭가슴살'],
+  '🛋️ 별로 안 움직였어요': ['두부', '계란'],
+  '🤢 속이 불편해요': ['두부'],
+  '😊 컨디션 좋아요': ['아보카도', '계란', '견과류']
+};
+
+var reasonMap = {
+  '피로감': '피로 회복에 도움이 될 수 있는 재료로 구성했어요.',
+  '스트레스': '마음이 편안해지는 재료로 구성했어요.',
+  '활동많음': '오늘 쓴 에너지를 보충할 수 있는 재료로 구성했어요.',
+  '가벼운식사': '부담 없이 가볍게 즐길 수 있는 조합이에요.',
+  '소화편함': '소화가 편한 재료 위주로 구성했어요.'
+};
+
+var healths = ['당뇨', '임신', '수유', '약물 제한', '없음'];
+var allergies = ['우유', '계란', '땅콩', '견과류', '생선', '없음'];
+
+var state = { step: 0, age: null, condition: [], health: ['없음'], allergy: ['없음'] };
+
+function makeBtn(label, onClick) {
+  var b = document.createElement('button');
+  b.className = 'opt-btn';
+  b.textContent = label;
+  b.onclick = onClick;
+  return b;
+}
+function makePill(label, onClick) {
+  var b = document.createElement('button');
+  b.className = 'pill-btn';
+  b.textContent = label;
+  b.onclick = onClick;
+  return b;
+}
+
+function renderAge() {
+  var box = document.getElementById('ageOpts');
+  box.innerHTML = '';
+  ['10대', '20대', '30대', '40대', '50대 이상'].forEach(function (a) {
+    box.appendChild(makeBtn(a, function () { state.age = a; goTo(1); }));
+  });
+}
+
+function renderCond() {
+  var box = document.getElementById('condOpts');
+  box.innerHTML = '';
+  conds.forEach(function (item) {
+    var btn = makeBtn(item, function () {
+      var arr = state.condition, idx = arr.indexOf(item);
+      if (idx > -1) { arr.splice(idx, 1); }
+      else { if (arr.length >= 2) { arr.shift(); } arr.push(item); }
+      renderCond();
+      var wrap = document.getElementById('condNext');
+      wrap.innerHTML = '';
+      if (arr.length === 2) { setTimeout(function () { goTo(2); }, 350); }
+      else if (arr.length === 1) { wrap.appendChild(makePill('다음 →', function () { goTo(2); })); }
+    });
+    if (state.condition.indexOf(item) > -1) { btn.classList.add('selected'); }
+    box.appendChild(btn);
+  });
+}
+
+function renderExclusive(containerId, nextWrapId, list, groupKey, nextStep) {
+  var box = document.getElementById(containerId);
+  box.innerHTML = '';
+  list.forEach(function (item) {
+    var btn = makeBtn(item, function () {
+      var arr = state[groupKey];
+      if (item === '없음') { state[groupKey] = ['없음']; }
+      else if (arr.indexOf('없음') > -1) { state[groupKey] = [item]; }
+      else {
+        var idx = arr.indexOf(item);
+        if (idx > -1) { arr.splice(idx, 1); } else { arr.push(item); }
+        if (arr.length === 0) { state[groupKey] = ['없음']; }
+      }
+      renderExclusive(containerId, nextWrapId, list, groupKey, nextStep);
+      var wrap = document.getElementById(nextWrapId);
+      wrap.innerHTML = '';
+      var cur = state[groupKey];
+      if (cur.length === 1 && cur[0] === '없음') { setTimeout(function () { goTo(nextStep); }, 300); }
+      else { wrap.appendChild(makePill('다음 →', function () { goTo(nextStep); })); }
+    });
+    if (state[groupKey].indexOf(item) > -1) { btn.classList.add('selected'); }
+    box.appendChild(btn);
+  });
+}
+
+function computeResult() {
+  var selectedTags = state.condition.map(function (c) { return condTagMap[c]; }).filter(Boolean);
+  var chosenVeggies = [];
+
+  if (selectedTags.length === 0) {
+    chosenVeggies = defaultVeggies.slice();
+  } else {
+    selectedTags.forEach(function (tag) {
+      var matches = veggies.filter(function (v) { return v.tags.indexOf(tag) > -1; });
+      matches.slice(0, 2).forEach(function (v) {
+        if (chosenVeggies.indexOf(v.name) === -1) { chosenVeggies.push(v.name); }
+      });
+    });
+    var i = 0;
+    while (chosenVeggies.length < 2 && i < defaultVeggies.length) {
+      if (chosenVeggies.indexOf(defaultVeggies[i]) === -1) { chosenVeggies.push(defaultVeggies[i]); }
+      i++;
+    }
+  }
+  chosenVeggies = chosenVeggies.slice(0, 4);
+
+  var condKeys = state.condition.length > 0 ? state.condition : ['😊 컨디션 좋아요'];
+  var addSet = [];
+  condKeys.forEach(function (c) {
+    (complementMap[c] || []).forEach(function (item) {
+      if (addSet.indexOf(item) === -1) { addSet.push(item); }
+    });
+  });
+  var allergySelected = state.allergy.filter(function (a) { return a !== '없음'; });
+  addSet = addSet.filter(function (item) { return allergySelected.indexOf(item) === -1; });
+
+  var reasonText = selectedTags.length > 0 ? reasonMap[selectedTags[0]] : '오늘 컨디션에 맞춰 골라본 무난한 조합이에요.';
+
+  document.getElementById('resultReason').textContent = reasonText;
+  document.getElementById('vegChips').innerHTML = chosenVeggies.map(function (v) {
+    return '<span class="chip veg">' + v + '</span>';
+  }).join('');
+  document.getElementById('addChips').innerHTML = addSet.length > 0
+    ? addSet.map(function (v) { return '<span class="chip add">' + v + '</span>'; }).join('')
+    : '<span class="chip add">기본 드레싱만으로 충분해요</span>';
+
+  var healthSelected = state.health.filter(function (h) { return h !== '없음'; });
+  var noteBox = document.getElementById('healthNote');
+  if (healthSelected.length > 0) {
+    noteBox.style.display = 'block';
+    noteBox.textContent = '건강 상태에 따라 맞는 식단이 다를 수 있어요. 필요하다면 전문가와 상담을 권장드립니다.';
+  } else {
+    noteBox.style.display = 'none';
+  }
+}
+
+function renderDots() {
+  var d = document.getElementById('dots');
+  d.innerHTML = '';
+  for (var i = 0; i < 5; i++) {
+    var dot = document.createElement('div');
+    dot.className = 'dot' + (i <= state.step ? ' active' : '');
+    d.appendChild(dot);
+  }
+}
+
+function goTo(i) {
+  state.step = i;
+  document.querySelectorAll('.screen').forEach(function (s) {
+    s.style.display = (+s.dataset.i === i) ? 'block' : 'none';
+  });
+  document.getElementById('backBtn').style.visibility = i > 0 ? 'visible' : 'hidden';
+  if (i === 4) { computeResult(); }
+  renderDots();
+}
+
+document.getElementById('backBtn').onclick = function () { if (state.step > 0) { goTo(state.step - 1); } };
+document.getElementById('resetBtn').onclick = function () {
+  state = { step: 0, age: null, condition: [], health: ['없음'], allergy: ['없음'] };
+  renderAll();
+};
+
+function renderAll() {
+  renderAge();
+  renderCond();
+  renderExclusive('healthOpts', 'healthNext', healths, 'health', 3);
+  renderExclusive('allergyOpts', 'allergyNext', allergies, 'allergy', 4);
+  goTo(state.step);
+}
+renderAll();
+</script>
+
+</body>
+</html>
