@@ -125,7 +125,35 @@
   .site-footer strong { color: #fff; }
   .salad-fab { position: fixed; right: 24px; bottom: 24px; z-index: 999; display: inline-flex; align-items: center; gap: 6px; background: var(--color-accent-dark); color: #fff; text-decoration: none; font-weight: 700; font-size: 14px; padding: 14px 22px; border-radius: 999px; box-shadow: 0 8px 20px rgba(28,49,40,0.3); transition: transform .15s ease, background-color .15s ease; }
   .salad-fab:hover { background: var(--color-accent); transform: translateY(-2px); }
-  @media (max-width: 480px) { .salad-fab { right: 16px; bottom: 16px; padding: 12px 18px; font-size: 13px; } }
+  @media (max-width: 480px) {
+    .salad-fab { right: 16px; bottom: 16px; padding: 12px 18px; font-size: 13px; }
+  }
+
+  /* ===== ⭐ 샐러드 추천 슬라이드 패널 ===== */
+  .salad-drawer-backdrop {
+    position: fixed; inset: 0; background: rgba(28,49,40,0.45);
+    opacity: 0; pointer-events: none; transition: opacity .25s ease; z-index: 1000;
+  }
+  .salad-drawer-backdrop.open { opacity: 1; pointer-events: auto; }
+  .salad-drawer {
+    position: fixed; top: 0; right: 0; height: 100vh; width: min(420px, 92vw);
+    background: #fff; z-index: 1001; box-shadow: -8px 0 24px rgba(28,49,40,0.2);
+    transform: translateX(100%); transition: transform .3s ease;
+    display: flex; flex-direction: column;
+  }
+  .salad-drawer.open { transform: translateX(0); }
+  .salad-drawer-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 18px; background: var(--color-primary); color: #fff;
+    font-family: var(--font-display); font-weight: 700;
+  }
+  .salad-drawer-header button {
+    background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; line-height: 1;
+  }
+  .salad-drawer iframe { flex: 1; border: 0; width: 100%; }
+  @media (prefers-reduced-motion: reduce) {
+    .salad-drawer, .salad-drawer-backdrop { transition: none; }
+  }
 </style>
 </head>
 <body>
@@ -315,7 +343,20 @@
   </div>
 </footer>
 
-<a href="salad.html" class="salad-fab">🥗 오늘의 샐러드 추천</a>
+<button id="saladFabBtn" class="salad-fab" style="border:none;cursor:pointer;font-family:inherit"
+        type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="saladDrawer">
+  🥗 오늘의 샐러드 추천
+</button>
+
+<div class="salad-drawer-backdrop" id="saladBackdrop"></div>
+<aside class="salad-drawer" id="saladDrawer" role="dialog" aria-modal="true"
+       aria-label="오늘의 맞춤 샐러드 추천" aria-hidden="true">
+  <div class="salad-drawer-header">
+    <span>오늘의 맞춤 샐러드</span>
+    <button id="saladCloseBtn" type="button" aria-label="닫기">×</button>
+  </div>
+  <iframe src="salad.html" title="샐러드 추천"></iframe>
+</aside>
 
 <script>
   var navToggle = document.getElementById('navToggle');
@@ -342,7 +383,35 @@
     });
   }, { rootMargin: '-50% 0px -45% 0px' });
   sections.forEach(function (section) { observer.observe(section); });
-  document.getElementById('year').textContent = new Date().getFullYear();
+   document.getElementById('year').textContent = new Date().getFullYear();
+
+  // ⭐ 샐러드 추천 슬라이드 패널 여닫기
+  var saladFabBtn = document.getElementById('saladFabBtn');
+  var saladDrawer = document.getElementById('saladDrawer');
+  var saladBackdrop = document.getElementById('saladBackdrop');
+  var saladCloseBtn = document.getElementById('saladCloseBtn');
+
+  function openSaladDrawer() {
+    saladDrawer.classList.add('open');
+    saladBackdrop.classList.add('open');
+    saladDrawer.setAttribute('aria-hidden', 'false');
+    saladFabBtn.setAttribute('aria-expanded', 'true');
+    saladCloseBtn.focus();
+  }
+  function closeSaladDrawer() {
+    saladDrawer.classList.remove('open');
+    saladBackdrop.classList.remove('open');
+    saladDrawer.setAttribute('aria-hidden', 'true');
+    saladFabBtn.setAttribute('aria-expanded', 'false');
+    saladFabBtn.focus();
+  }
+  saladFabBtn.addEventListener('click', openSaladDrawer);
+  saladCloseBtn.addEventListener('click', closeSaladDrawer);
+  saladBackdrop.addEventListener('click', closeSaladDrawer);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') { closeSaladDrawer(); }
+  });
+</script>
 </script>
 
 </body>
