@@ -136,7 +136,7 @@
   <header class="kiosk-header">
     <button id="backBtn" aria-label="이전 화면">←</button>
     <h1>미스테리팜 샐러드 추천</h1>
-    <a class="home-link" href="index.html">홈</a>
+    <a class="home-link" href="index.html" id="saladHomeLink">홈</a>
   </header>
   <div class="dots" id="dots"></div>
 
@@ -377,6 +377,16 @@ document.getElementById('backBtn').onclick = function () { if (state.step > 0) {
 document.getElementById('resetBtn').onclick = function () {
   state = { step: 0, age: null, condition: [], health: ['없음'], allergy: ['없음'] };
   renderAll();
+
+// ⭐ 슬라이드 패널 안에서 열렸으면 "홈"이 패널만 닫도록 처리
+var saladHomeLink = document.getElementById('saladHomeLink');
+saladHomeLink.addEventListener('click', function (e) {
+  if (window.parent && window.parent !== window && typeof window.parent.closeSaladDrawer === 'function') {
+    e.preventDefault();
+    window.parent.closeSaladDrawer();
+  }
+});
+</script>
 };
 
 function renderAll() {
