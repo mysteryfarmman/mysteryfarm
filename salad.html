@@ -6,19 +6,6 @@
 <title>미스테리팜 | 오늘의 맞춤 샐러드</title>
 <meta name="description" content="오늘 컨디션에 맞춰 미스테리팜 채소로 만드는 맞춤 샐러드를 추천해드립니다.">
 
-<!-- =========================================================
-  🛠 [커스터마이징 가이드]
-  이 파일도 index.html처럼 하나의 파일 안에 전부 들어있습니다.
-
-  1) 채소 추가/수정 → 코드 안 "⭐ 채소 데이터" 부분 찾기
-  2) 컨디션 문구 수정 → "⭐ 컨디션 선택지" 부분 찾기
-  3) 추천 재료 수정  → "⭐ 보완 재료" 부분 찾기
-  4) 색상은 index.html과 통일되어 있어서, 여기서 바꾸면
-     index.html의 :root 색상도 똑같이 맞춰서 바꿔주세요.
-
-  Ctrl+F(찾기)로 "⭐"를 검색하면 수정할 곳을 빠르게 찾을 수 있어요.
-========================================================== -->
-
 <style>
   :root {
     --color-bg: #F7F3EC;
@@ -189,7 +176,6 @@
 </div>
 
 <script>
-/* ⭐ 채소 데이터 - 채소를 더 추가하려면 이 배열에 { name:'이름', tags:['태그1','태그2'] } 형식으로 한 줄 추가하면 됩니다 */
 var veggies = [
   { name: '로메인',   tags: ['소화편함', '가벼운식사'] },
   { name: '버터헤드', tags: ['소화편함', '가벼운식사'] },
@@ -201,7 +187,6 @@ var veggies = [
 ];
 var defaultVeggies = ['카이피라', '로메인', '버터헤드'];
 
-/* ⭐ 컨디션 선택지 - 문구를 바꾸려면 여기, 태그를 바꾸려면 오른쪽 값을 위 채소 태그와 맞춰서 바꾸세요 */
 var condTagMap = {
   '😴 피곤해요': '피로감',
   '😣 스트레스 받았어요': '스트레스',
@@ -212,7 +197,6 @@ var condTagMap = {
 };
 var conds = Object.keys(condTagMap);
 
-/* ⭐ 보완 재료 - 컨디션별로 함께 추천할 재료 목록입니다 */
 var complementMap = {
   '😴 피곤해요': ['계란', '닭가슴살'],
   '😣 스트레스 받았어요': ['아보카도', '견과류'],
@@ -377,16 +361,6 @@ document.getElementById('backBtn').onclick = function () { if (state.step > 0) {
 document.getElementById('resetBtn').onclick = function () {
   state = { step: 0, age: null, condition: [], health: ['없음'], allergy: ['없음'] };
   renderAll();
-
-// ⭐ 슬라이드 패널 안에서 열렸으면 "홈"이 패널만 닫도록 처리
-var saladHomeLink = document.getElementById('saladHomeLink');
-saladHomeLink.addEventListener('click', function (e) {
-  if (window.parent && window.parent !== window && typeof window.parent.closeSaladDrawer === 'function') {
-    e.preventDefault();
-    window.parent.closeSaladDrawer();
-  }
-});
-</script>
 };
 
 function renderAll() {
@@ -397,6 +371,14 @@ function renderAll() {
   goTo(state.step);
 }
 renderAll();
+
+var saladHomeLink = document.getElementById('saladHomeLink');
+saladHomeLink.addEventListener('click', function (e) {
+  if (window.parent && window.parent !== window && typeof window.parent.closeSaladDrawer === 'function') {
+    e.preventDefault();
+    window.parent.closeSaladDrawer();
+  }
+});
 </script>
 
 </body>
