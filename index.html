@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>미스테리팜 | 자연 속 작은 탐험</title>
 <meta name="description" content="미스테리팜은 스마트팜 샐러드 만들기, 천연 수세미 만들기, 꾸러미 수확 체험, 숲길 산책을 즐길 수 있는 체험농장입니다.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%232C4A3B'/%3E%3Cpath d='M50 20c-14 10-22 24-22 38 0 8 6 14 14 14v-14c0-10 4-20 8-24 4 4 8 14 8 24v14c8 0 14-6 14-14 0-14-8-28-22-38z' fill='%23C1541A'/%3E%3C/svg%3E">
 
 <style>
   :root {
@@ -14,6 +15,7 @@
     --color-primary-dark: #1C3128;
     --color-accent: #C1541A;
     --color-accent-dark: #9C4014;
+    --color-tech: #1F6F78;
     --color-text: #2A2622;
     --color-text-soft: #6B6255;
     --color-white: #FFFFFF;
@@ -77,9 +79,11 @@
   .hero p.lead { font-size: 1.15rem; color: rgba(255,255,255,0.88); max-width: 560px; margin-bottom: 2em; }
   .hero .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
   .zones { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border-top: 1px solid var(--color-border); }
-  .zone { padding: 32px 28px; border-left: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); }
+  .zone { padding: 32px 28px; border-left: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); opacity: 0; transform: translateY(16px); transition: opacity .6s ease, transform .6s ease; }
+  .zone.is-visible { opacity: 1; transform: none; }
   .zone:first-child { border-left: none; }
   .zone-tag { display: inline-block; font-family: var(--font-display); font-weight: 700; font-size: 0.85rem; color: var(--color-accent-dark); border: 1px solid var(--color-accent-dark); border-radius: 999px; padding: 3px 12px; margin-bottom: 14px; }
+  .zone-tag--tech { color: var(--color-tech); border-color: var(--color-tech); }
   .zone h3 { font-size: 1.2rem; margin-bottom: 0.5em; }
   .zone p { color: var(--color-text-soft); font-size: 0.98rem; margin: 0; }
   @media (max-width: 780px) {
@@ -88,25 +92,31 @@
     .zone:first-child { border-top: none; }
   }
   .story-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+  .story-grid > div { opacity: 0; transform: translateY(16px); transition: opacity .6s ease, transform .6s ease; }
+  .story-grid > div.is-visible { opacity: 1; transform: none; }
   .story-video { aspect-ratio: 16 / 9; background: var(--color-primary-dark); border-radius: var(--radius); overflow: hidden; position: relative; }
   .story-video iframe { width: 100%; height: 100%; border: 0; }
   .story-video .video-placeholder { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: rgba(255,255,255,0.85); padding: 24px; gap: 8px; }
   .story-video .video-placeholder svg { width: 44px; height: 44px; opacity: 0.8; }
   @media (max-width: 900px) { .story-grid { grid-template-columns: 1fr; gap: 32px; } }
   .experience-list { display: flex; flex-direction: column; gap: 64px; }
-  .experience-item { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+  .experience-item { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; opacity: 0; transform: translateY(16px); transition: opacity .6s ease, transform .6s ease; }
+  .experience-item.is-visible { opacity: 1; transform: none; }
   .experience-item.reverse .exp-media { order: 2; }
   .experience-item.reverse .exp-copy { order: 1; }
   .exp-media img { border-radius: var(--radius); width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background: var(--color-bg-alt); }
   .exp-copy h3 { font-size: 1.4rem; margin-bottom: 0.4em; }
   .exp-copy p.desc { color: var(--color-text-soft); }
   .price-tag { display: inline-flex; align-items: center; gap: 6px; border: 1px dashed var(--color-accent-dark); color: var(--color-accent-dark); font-weight: 700; padding: 7px 14px; border-radius: var(--radius); font-size: 0.95rem; margin-top: 10px; }
+  .price-tag--tech { color: var(--color-tech); border-color: var(--color-tech); }
   @media (max-width: 780px) {
     .experience-item, .experience-item.reverse { grid-template-columns: 1fr; gap: 20px; }
     .experience-item.reverse .exp-media { order: 1; }
     .experience-item.reverse .exp-copy { order: 2; }
   }
   .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; }
+  .contact-grid > * { opacity: 0; transform: translateY(16px); transition: opacity .6s ease, transform .6s ease; }
+  .contact-grid > *.is-visible { opacity: 1; transform: none; }
   .contact-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 22px; }
   .contact-list li { display: flex; gap: 14px; align-items: flex-start; }
   .contact-list svg { width: 22px; height: 22px; flex-shrink: 0; color: var(--color-accent-dark); margin-top: 2px; }
@@ -128,8 +138,6 @@
   @media (max-width: 480px) {
     .salad-fab { right: 16px; bottom: 16px; padding: 12px 18px; font-size: 13px; }
   }
-
-  /* ===== ⭐ 샐러드 추천 슬라이드 패널 ===== */
   .salad-drawer-backdrop {
     position: fixed; inset: 0; background: rgba(28,49,40,0.45);
     opacity: 0; pointer-events: none; transition: opacity .25s ease; z-index: 1000;
@@ -203,7 +211,7 @@
     </div>
     <div class="zones">
       <div class="zone">
-        <span class="zone-tag">구역 A</span>
+        <span class="zone-tag zone-tag--tech">구역 A</span>
         <h3>스마트팜</h3>
         <p>직접 재배한 채소를 그 자리에서 수확해 나만의 샐러드를 만들어보는 공간입니다.</p>
       </div>
@@ -257,7 +265,7 @@
           <div class="exp-copy">
             <h3>스마트팜 샐러드 만들기</h3>
             <p class="desc">내 건강 정보로 만드는 오늘의 샐러드.</p>
-            <span class="price-tag"> 100g당 1,500원~</span>
+            <span class="price-tag price-tag--tech"> 100g당 1,500원~</span>
           </div>
         </article>
         <article class="experience-item reverse">
@@ -345,14 +353,14 @@
 
 <button id="saladFabBtn" class="salad-fab" style="border:none;cursor:pointer;font-family:inherit"
         type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="saladDrawer">
-  🥗 오늘,나의 샐러드
+  🥗 나에게 맞는 샐러드 추천
 </button>
 
 <div class="salad-drawer-backdrop" id="saladBackdrop"></div>
 <aside class="salad-drawer" id="saladDrawer" role="dialog" aria-modal="true"
-       aria-label="오늘 나만의 샐러드를 만들어보세요" aria-hidden="true">
+       aria-label="오늘, 나의 샐러드" aria-hidden="true">
   <div class="salad-drawer-header">
-    <span>오늘의 샐러드</span>
+    <span>오늘, 나의 샐러드</span>
     <button id="saladCloseBtn" type="button" aria-label="닫기">×</button>
   </div>
   <iframe src="salad.html" title="샐러드 추천"></iframe>
@@ -383,9 +391,20 @@
     });
   }, { rootMargin: '-50% 0px -45% 0px' });
   sections.forEach(function (section) { observer.observe(section); });
-   document.getElementById('year').textContent = new Date().getFullYear();
 
-  // ⭐ 샐러드 추천 슬라이드 패널 여닫기
+  var revealEls = document.querySelectorAll('.zone, .experience-item, .story-grid > div, .contact-grid > *');
+  var revealObserver = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  revealEls.forEach(function (el) { revealObserver.observe(el); });
+
+  document.getElementById('year').textContent = new Date().getFullYear();
+
   var saladFabBtn = document.getElementById('saladFabBtn');
   var saladDrawer = document.getElementById('saladDrawer');
   var saladBackdrop = document.getElementById('saladBackdrop');
@@ -411,7 +430,6 @@
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') { closeSaladDrawer(); }
   });
-</script>
 </script>
 
 </body>
