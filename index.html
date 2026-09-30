@@ -430,6 +430,7 @@
   var saladDrawer = document.getElementById('saladDrawer');
   var saladBackdrop = document.getElementById('saladBackdrop');
   var saladCloseBtn = document.getElementById('saladCloseBtn');
+var saladIframe = document.querySelector('#saladDrawer iframe');
 
   function openSaladDrawer() {
     saladDrawer.classList.add('open');
@@ -444,6 +445,8 @@
     saladDrawer.setAttribute('aria-hidden', 'true');
     saladFabBtn.setAttribute('aria-expanded', 'false');
     saladFabBtn.focus();
+    setTimeout(function () { saladIframe.contentWindow.location.reload(); }, 300);
+  }
   }
   saladFabBtn.addEventListener('click', openSaladDrawer);
   saladCloseBtn.addEventListener('click', closeSaladDrawer);
